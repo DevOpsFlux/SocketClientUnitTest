@@ -15,14 +15,18 @@ TCP Socket Client Unit Test
 - System.Net.Sockets;
 - System.Runtime.InteropServices
 
-## Unit Test Class Type
+## 3. Unit Test Class Type
 - TCPClient
 - SocketClient
 - NetAsioClient
 
-## 참고 정보
+## 4. 참고 정보
 - https://docs.microsoft.com/en-us/dotnet/api/system.net.sockets.socket?view=netframework-4.8
 - https://docs.microsoft.com/en-us/dotnet/api/system.net.sockets.tcpclient?view=netframework-4.8
 - https://trip2ee.tistory.com/23
 - https://sunyzero.tistory.com/198
 - http://egloos.zum.com/yajino/v/782519
+
+## 5. 샘플
+![Monitor](./img/unitest1.JPG)
+

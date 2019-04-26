@@ -8,12 +8,18 @@
 '       http://egloos.zum.com/yajino/v/782519
 '       https://docs.microsoft.com/en-us/dotnet/api/system.net.sockets.socket?view=netframework-4.8
 '       https://docs.microsoft.com/en-us/dotnet/api/system.net.sockets.tcpclient?view=netframework-4.8
+
+'       https://www.nuget.org/packages/System.Buffers/
+'       https://isolineltd.com/blog/2018/10/16/Buffer-Memory-Pools-in-.NET
 */
 using System;
 using System.Net;
 using System.Text;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+
+// Install-Package System.Buffers -Version 4.5.0
+using System.Buffers;
 
 namespace SocketClientUnitTest
 {
@@ -43,7 +49,13 @@ namespace SocketClientUnitTest
 
             // # NetAsioClient
             //SendNetAsioClient();
-            
+
+            // # BufferUnitTest
+            //BufferUnitTest();
+
+            // # BuffersPoolUnitTest
+            BuffersPoolUnitTest();
+
         }
 
         #region # SendSocketClient
@@ -230,6 +242,70 @@ namespace SocketClientUnitTest
         );
 
         #endregion
-        
+
+        #region # BufferUnitTest
+        private static void BufferUnitTest()
+        {
+
+            int[] myarr1 = new int[5] { 1, 2, 3, 4, 5 };
+            int[] myarr2 = new int[10] { 0, 0, 0, 0, 0, 6, 7, 8, 9, 10 };
+
+            Console.Write("Before Array copy operation\n");
+            Console.Write("Myarr1 and Byte Length{0}\n", myarr1.Length);
+            foreach (int i in myarr1)
+                Console.Write("{0} \t", i);
+            Console.WriteLine("\nMyarr2 and Byte Length:{0} \n", myarr2.Length);
+
+            foreach (int i in myarr2)
+                Console.Write("{0} \t", i);
+
+            //here we are copying index to index as data
+            Array.Copy(myarr1, 0, myarr2, 0, 5);
+
+            Console.Write("After Array copy operation\n");
+            Console.Write("Myarr1 :\n");
+            foreach (int i in myarr1)
+                Console.Write("{0} \t", i);
+            Console.WriteLine("\nMyarr2: \n");
+            foreach (int i in myarr2)
+                Console.Write("{0} \t", i);
+            Console.ReadLine();
+
+        }
+        #endregion
+
+        #region # BuffersPoolUnitTest
+        /// <summary>
+        /// using System.Buffers;
+        /// https://isolineltd.com/blog/2018/10/16/Buffer-Memory-Pools-in-.NET
+        /// </summary>
+        private static void BuffersPoolUnitTest()
+        {
+            ArrayPool<byte> pool = ArrayPool<byte>.Shared; //obtain a default instance of array pool
+
+            byte[] newArray = pool.Rent(128); //get an array of 128 elements
+
+            pool.Return(newArray);
+
+            Console.WriteLine("newArray Default Buffer Size : {0}", newArray.Length.ToString());
+
+            newArray = System.Text.Encoding.GetEncoding("euc-kr").GetBytes(strSendMsg);
+
+            int unicode = 65;
+            char character = (char)unicode;
+
+            Console.WriteLine("newArray Rent Set Buffer Size : {0} ", newArray.Length.ToString());
+            Console.WriteLine(" ");
+
+            foreach (int i in newArray)
+            {
+                character = (char)i;
+                Console.WriteLine("0x{0} -> {1}", i, character.ToString());
+            }
+
+            Console.ReadLine();
+
+        }
+        #endregion
     }
 }
